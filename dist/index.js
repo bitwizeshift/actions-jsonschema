@@ -91720,6 +91720,7 @@ const js_yaml_1 = __importDefault(__nccwpck_require__(1917));
  * @returns an iterable of objects
  */
 async function* load() {
+    core.info('Loading input files');
     return readFiles(getInputFiles());
 }
 exports.load = load;
@@ -91746,12 +91747,16 @@ exports.isJSON = isJSON;
  * @param paths the paths to read
  */
 async function* readFiles(paths) {
+    core.info('Reading input files');
     for await (const path of paths) {
+        core.info(`Reading file: ${path}`);
         const content = await promises.readFile(path, 'utf-8');
         if (isYAML(path)) {
+            core.info(`Parsing YAML file: ${path}`);
             yield [path, js_yaml_1.default.load(content)];
         }
         else if (isJSON(path)) {
+            core.info(`Parsing JSON file: ${path}`);
             yield [path, JSON.parse(content)];
         }
         else {

@@ -9,6 +9,7 @@ import yaml from 'js-yaml'
  * @returns an iterable of objects
  */
 export async function* load(): AsyncIterable<[string, any]> {
+  core.info('Loading input files')
   return readFiles(getInputFiles())
 }
 
@@ -37,12 +38,16 @@ export function isJSON(file: string): boolean {
 export async function* readFiles(
   paths: AsyncIterable<string>
 ): AsyncIterable<[string, any]> {
+  core.info('Reading input files')
   for await (const path of paths) {
+    core.info(`Reading file: ${path}`)
     const content = await promises.readFile(path, 'utf-8')
 
     if (isYAML(path)) {
+      core.info(`Parsing YAML file: ${path}`)
       yield [path, yaml.load(content)]
     } else if (isJSON(path)) {
+      core.info(`Parsing JSON file: ${path}`)
       yield [path, JSON.parse(content)]
     } else {
       throw new Error(`Unsupported file type: ${path}`)
