@@ -25,12 +25,6 @@ describe('objects', () => {
     })
   })
 
-  describe('readFiles', () => {
-    it('should read all files from the input paths', async () => {
-      // TODO: Properly test
-    })
-  })
-
   describe('getInputFiles', () => {
     it('should return an async iterable of input files', async () => {
       // TODO: Properly test

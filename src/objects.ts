@@ -10,7 +10,20 @@ import yaml from 'js-yaml'
  */
 export async function* load(): AsyncIterable<[string, any]> {
   core.info('Loading input files')
-  return readFiles(getInputFiles())
+  for await (const path of getInputFiles()) {
+    core.info(`Reading file: ${path}`)
+    const content = await promises.readFile(path, 'utf-8')
+
+    if (isYAML(path)) {
+      core.info(`Parsing YAML file: ${path}`)
+      yield [path, yaml.load(content)]
+    } else if (isJSON(path)) {
+      core.info(`Parsing JSON file: ${path}`)
+      yield [path, JSON.parse(content)]
+    } else {
+      throw new Error(`Unsupported file type: ${path}`)
+    }
+  }
 }
 
 /**
@@ -28,31 +41,6 @@ export function isYAML(file: string): boolean {
  */
 export function isJSON(file: string): boolean {
   return file.toLocaleLowerCase().endsWith('.json')
-}
-
-/**
- * Reads all files from the input paths
- *
- * @param paths the paths to read
- */
-export async function* readFiles(
-  paths: AsyncIterable<string>
-): AsyncIterable<[string, any]> {
-  core.info('Reading input files')
-  for await (const path of paths) {
-    core.info(`Reading file: ${path}`)
-    const content = await promises.readFile(path, 'utf-8')
-
-    if (isYAML(path)) {
-      core.info(`Parsing YAML file: ${path}`)
-      yield [path, yaml.load(content)]
-    } else if (isJSON(path)) {
-      core.info(`Parsing JSON file: ${path}`)
-      yield [path, JSON.parse(content)]
-    } else {
-      throw new Error(`Unsupported file type: ${path}`)
-    }
-  }
 }
 
 /**

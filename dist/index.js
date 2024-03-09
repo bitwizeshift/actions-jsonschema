@@ -91644,11 +91644,14 @@ const ajv_1 = __importDefault(__nccwpck_require__(2426));
 async function run() {
     try {
         const loader = schema.load();
+        core.startGroup(`Loading schema`);
         const ajv = new ajv_1.default({ allErrors: true });
         const schemaText = await loader.load();
         const validate = ajv.compile(JSON.parse(schemaText));
+        core.endGroup();
         let count = 0;
         for await (const [file, obj] of objects.load()) {
+            core.startGroup(`Validating ${file}`);
             count++;
             const valid = validate(obj);
             if (!valid) {
@@ -91661,6 +91664,7 @@ async function run() {
                 }
                 core.setFailed(`Validation failed: ${ajv.errorsText(validate.errors)}`);
             }
+            core.endGroup();
         }
         if (count == 0) {
             core.warning('No files were validated');
@@ -91709,7 +91713,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getInputFiles = exports.readFiles = exports.isJSON = exports.isYAML = exports.load = void 0;
+exports.getInputFiles = exports.isJSON = exports.isYAML = exports.load = void 0;
 const promises = __importStar(__nccwpck_require__(3292));
 const core = __importStar(__nccwpck_require__(2186));
 const glob = __importStar(__nccwpck_require__(8090));
@@ -91721,7 +91725,21 @@ const js_yaml_1 = __importDefault(__nccwpck_require__(1917));
  */
 async function* load() {
     core.info('Loading input files');
-    return readFiles(getInputFiles());
+    for await (const path of getInputFiles()) {
+        core.info(`Reading file: ${path}`);
+        const content = await promises.readFile(path, 'utf-8');
+        if (isYAML(path)) {
+            core.info(`Parsing YAML file: ${path}`);
+            yield [path, js_yaml_1.default.load(content)];
+        }
+        else if (isJSON(path)) {
+            core.info(`Parsing JSON file: ${path}`);
+            yield [path, JSON.parse(content)];
+        }
+        else {
+            throw new Error(`Unsupported file type: ${path}`);
+        }
+    }
 }
 exports.load = load;
 /**
@@ -91741,30 +91759,6 @@ function isJSON(file) {
     return file.toLocaleLowerCase().endsWith('.json');
 }
 exports.isJSON = isJSON;
-/**
- * Reads all files from the input paths
- *
- * @param paths the paths to read
- */
-async function* readFiles(paths) {
-    core.info('Reading input files');
-    for await (const path of paths) {
-        core.info(`Reading file: ${path}`);
-        const content = await promises.readFile(path, 'utf-8');
-        if (isYAML(path)) {
-            core.info(`Parsing YAML file: ${path}`);
-            yield [path, js_yaml_1.default.load(content)];
-        }
-        else if (isJSON(path)) {
-            core.info(`Parsing JSON file: ${path}`);
-            yield [path, JSON.parse(content)];
-        }
-        else {
-            throw new Error(`Unsupported file type: ${path}`);
-        }
-    }
-}
-exports.readFiles = readFiles;
 /**
  * @returns an async iterable of input files
  */

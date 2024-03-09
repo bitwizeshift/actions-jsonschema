@@ -11,12 +11,15 @@ export async function run(): Promise<void> {
   try {
     const loader = schema.load()
 
+    core.startGroup(`Loading schema`)
     const ajv = new Ajv({ allErrors: true })
     const schemaText = await loader.load()
     const validate = ajv.compile(JSON.parse(schemaText))
+    core.endGroup()
 
     let count = 0
     for await (const [file, obj] of objects.load()) {
+      core.startGroup(`Validating ${file}`)
       count++
       const valid = validate(obj)
       if (!valid) {
@@ -29,6 +32,7 @@ export async function run(): Promise<void> {
         }
         core.setFailed(`Validation failed: ${ajv.errorsText(validate.errors)}`)
       }
+      core.endGroup()
     }
     if (count == 0) {
       core.warning('No files were validated')
