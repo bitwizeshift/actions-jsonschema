@@ -23,7 +23,7 @@ export async function run(): Promise<void> {
         for (const error of validate.errors || []) {
           const property = error.instancePath.substring(1).replace(/\//g, '.')
           core.error(`${error.message}}`, {
-            title: `Validation Failure: ${property}`,
+            title: `Property '${property}' failed validation`,
             file
           })
         }
@@ -31,7 +31,7 @@ export async function run(): Promise<void> {
       }
     }
     if (count == 0) {
-      core.info('No files were validated')
+      core.warning('No files were validated')
     }
   } catch (error) {
     if (error instanceof Error) {

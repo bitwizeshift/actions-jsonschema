@@ -91655,7 +91655,7 @@ async function run() {
                 for (const error of validate.errors || []) {
                     const property = error.instancePath.substring(1).replace(/\//g, '.');
                     core.error(`${error.message}}`, {
-                        title: `Validation Failure: ${property}`,
+                        title: `Property '${property}' failed validation`,
                         file
                     });
                 }
@@ -91663,7 +91663,7 @@ async function run() {
             }
         }
         if (count == 0) {
-            core.info('No files were validated');
+            core.warning('No files were validated');
         }
     }
     catch (error) {
@@ -91764,9 +91764,11 @@ exports.readFiles = readFiles;
  * @returns an async iterable of input files
  */
 async function* getInputFiles() {
-    const input = core.getInput('files', { required: true });
+    const input = core.getInput('paths', { required: true });
+    core.info(`Globbing input: ${input}`);
     const globber = await glob.create(input);
     for await (const filePath of globber.globGenerator()) {
+        core.info(`Found file: ${filePath}`);
         yield filePath;
     }
 }
