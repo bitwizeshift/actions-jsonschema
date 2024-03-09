@@ -1,0 +1,73 @@
+name: Continuous Integration
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  test-typescript:
+    name: TypeScript Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        id: setup-node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+
+      - name: Install Dependencies
+        id: npm-ci
+        run: npm ci
+
+      - name: Check Format
+        id: npm-format-check
+        run: npm run format:check
+
+      - name: Lint
+        id: npm-lint
+        run: npm run lint
+
+      - name: Test
+        id: npm-ci-test
+        run: npm run ci-test
+
+  test-workflow-execution:
+    strategy:
+      matrix:
+        test:
+          - name: Self Validation
+            schema: https://json.schemastore.org/github-action.json
+            inputs: ./action.yaml
+            expect-pass: true
+          - name: github-action Validation
+            schema: https://json.schemastore.org/github-action.json
+            inputs: ./github-action/action.yaml
+            expect-pass: true
+          - name: github workflow Validation
+            schema: https://json.schemastore.org/github-workflow.json
+            inputs: ./.github/workflows
+            expect-pass: true
+          - name: Bad Action
+            schema: https://json.schemastore.org/github-action.json
+            inputs: ./.github/bad-action.yaml
+            expect-pass: false
+
+    uses: ./.github/workflows/test.yaml
+    name: Test ${{ matrix.test.name }}
+    with:
+      schema: ${{ matrix.test.schema }}
+      inputs: ${{ matrix.test.inputs }}
+      expect-pass: ${{ matrix.test.expect-pass }}

@@ -1,0 +1,46 @@
+name: Test JSON Schema action
+
+on:
+  workflow_call:
+    inputs:
+      schema:
+        description: The JSON Schema file or URL to use for the test
+        required: true
+        type: string
+      inputs:
+        description: The input file(s) to validate
+        required: true
+        type: string
+      expect-pass:
+        description: Whether the test is expected to pass or fail
+        required: true
+        type: boolean
+      cache-key:
+        description: The cache key to use for caching the action
+        required: false
+        type: string
+        default: ''
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Use the action
+        uses: ./
+        continue-on-error: ${{ !inputs.expect-pass }}
+        with:
+          schema: ${{ inputs.schema }}
+          inputs: ${{ inputs.inputs }}
+          cache-key: ${{ inputs.cache-key }}
+
+      - name: Check the result
+        shell: bash
+        run: |
+          if [ ${{ !inputs.expect-pass }} -eq 0 ]; then
+            echo "Expected to pass, but failed"
+            exit 1
+          fi

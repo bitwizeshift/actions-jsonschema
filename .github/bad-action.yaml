@@ -1,0 +1,17 @@
+name: My Composite Action
+description: A composite action that performs multiple steps
+
+inputs:
+  input1:
+    description: 'Input 1 description'
+    required: true
+    default: 'default value'
+    type: boolean
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Step 1
+
+    - name: Step 2
+      run: echo "Running Step 2"
