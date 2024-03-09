@@ -25,7 +25,7 @@ export async function run(): Promise<void> {
       if (!valid) {
         for (const error of validate.errors || []) {
           const property = error.instancePath.substring(1).replace(/\//g, '.')
-          core.error(`${error.message}}`, {
+          core.error(`${error.message}`, {
             title: `Property '${property}' failed validation`,
             file
           })

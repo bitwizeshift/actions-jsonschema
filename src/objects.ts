@@ -9,16 +9,12 @@ import yaml from 'js-yaml'
  * @returns an iterable of objects
  */
 export async function* load(): AsyncIterable<[string, any]> {
-  core.info('Loading input files')
   for await (const path of getInputFiles()) {
-    core.info(`Reading file: ${path}`)
     const content = await promises.readFile(path, 'utf-8')
 
     if (isYAML(path)) {
-      core.info(`Parsing YAML file: ${path}`)
       yield [path, yaml.load(content)]
     } else if (isJSON(path)) {
-      core.info(`Parsing JSON file: ${path}`)
       yield [path, JSON.parse(content)]
     } else {
       throw new Error(`Unsupported file type: ${path}`)
@@ -52,7 +48,7 @@ export async function* getInputFiles(): AsyncIterable<string> {
   const globber = await glob.create(input)
 
   for await (const filePath of globber.globGenerator()) {
-    core.info(`Found file: ${filePath}`)
+    core.debug(`Found file: ${filePath}`)
     yield filePath
   }
 }

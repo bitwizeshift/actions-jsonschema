@@ -29,7 +29,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Use the action
+      - name: Validate JSON Schema
         uses: ./
         continue-on-error: ${{ !inputs.expect-pass }}
         with:

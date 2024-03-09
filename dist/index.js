@@ -91657,7 +91657,7 @@ async function run() {
             if (!valid) {
                 for (const error of validate.errors || []) {
                     const property = error.instancePath.substring(1).replace(/\//g, '.');
-                    core.error(`${error.message}}`, {
+                    core.error(`${error.message}`, {
                         title: `Property '${property}' failed validation`,
                         file
                     });
@@ -91724,16 +91724,12 @@ const js_yaml_1 = __importDefault(__nccwpck_require__(1917));
  * @returns an iterable of objects
  */
 async function* load() {
-    core.info('Loading input files');
     for await (const path of getInputFiles()) {
-        core.info(`Reading file: ${path}`);
         const content = await promises.readFile(path, 'utf-8');
         if (isYAML(path)) {
-            core.info(`Parsing YAML file: ${path}`);
             yield [path, js_yaml_1.default.load(content)];
         }
         else if (isJSON(path)) {
-            core.info(`Parsing JSON file: ${path}`);
             yield [path, JSON.parse(content)];
         }
         else {
@@ -91767,7 +91763,7 @@ async function* getInputFiles() {
     core.info(`Globbing input: ${input}`);
     const globber = await glob.create(input);
     for await (const filePath of globber.globGenerator()) {
-        core.info(`Found file: ${filePath}`);
+        core.debug(`Found file: ${filePath}`);
         yield filePath;
     }
 }
