@@ -50,24 +50,24 @@ jobs:
         test:
           - name: Self Validation
             schema: https://json.schemastore.org/github-action.json
-            inputs: ./action.yaml
+            paths: ./action.yaml
             expect-pass: true
           - name: github-action Validation
             schema: https://json.schemastore.org/github-action.json
-            inputs: ./github-action/action.yaml
+            paths: ./github-action/action.yaml
             expect-pass: true
           - name: github workflow Validation
             schema: https://json.schemastore.org/github-workflow.json
-            inputs: ./.github/workflows
+            paths: ./.github/workflows
             expect-pass: true
           - name: Bad Action
             schema: https://json.schemastore.org/github-action.json
-            inputs: ./.github/bad-action.yaml
+            paths: ./.github/bad-action.yaml
             expect-pass: false
 
     uses: ./.github/workflows/test.yaml
     name: Test ${{ matrix.test.name }}
     with:
       schema: ${{ matrix.test.schema }}
-      inputs: ${{ matrix.test.inputs }}
+      paths: ${{ matrix.test.paths }}
       expect-pass: ${{ matrix.test.expect-pass }}

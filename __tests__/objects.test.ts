@@ -1,4 +1,4 @@
-import { load, isYAML, isJSON, readFiles, getInputFiles } from '../src/objects'
+import { isYAML, isJSON } from '../src/objects'
 
 describe('objects', () => {
   describe('load', () => {

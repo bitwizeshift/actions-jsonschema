@@ -7,8 +7,8 @@ on:
         description: The JSON Schema file or URL to use for the test
         required: true
         type: string
-      inputs:
-        description: The input file(s) to validate
+      paths:
+        description: The input file path(s) to validate
         required: true
         type: string
       expect-pass:
@@ -34,7 +34,7 @@ jobs:
         continue-on-error: ${{ !inputs.expect-pass }}
         with:
           schema: ${{ inputs.schema }}
-          inputs: ${{ inputs.inputs }}
+          paths: ${{ inputs.paths }}
           cache-key: ${{ inputs.cache-key }}
 
       - name: Check the result

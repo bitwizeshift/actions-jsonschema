@@ -54,7 +54,7 @@ export async function* readFiles(
  * @returns an async iterable of input files
  */
 export async function* getInputFiles(): AsyncIterable<string> {
-  const input = core.getInput('files', { required: true })
+  const input = core.getInput('paths', { required: true })
   const globber = await glob.create(input)
 
   for await (const filePath of globber.globGenerator()) {

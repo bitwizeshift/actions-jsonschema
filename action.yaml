@@ -9,7 +9,7 @@ branding:
   color: 'red'
 
 inputs:
-  files:
+  paths:
     description: |
       The file or files to validate. May be a glob expression. Separate
       expressions are separated by either comma or newlines.
