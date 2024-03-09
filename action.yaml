@@ -1,0 +1,32 @@
+name: 'Validate JSON Schema'
+description: |
+  Validate a JSON file against a JSON schema.
+  This action uses the `ajv` package to validate a JSON file against a JSON schema.
+  It is useful for ensuring that a JSON file meets a certain structure or format.
+author: Matthew Rodusek
+branding:
+  icon: 'check-square'
+  color: 'red'
+
+inputs:
+  files:
+    description: |
+      The file or files to validate. May be a glob expression. Separate
+      expressions are separated by either comma or newlines.
+    required: true
+  schema:
+    description: |
+      JSON schema to validate against the input file.
+      This may be either a relative path to a JSON schema file on disk or a URL
+      to a schema to validate against
+    required: true
+  cache-key:
+    description: |
+      The cache key to use for caching the schema. Only applicable if the
+      schema is downloaded from a URL.
+    required: false
+    default: ''
+
+runs:
+  using: node20
+  main: dist/index.js

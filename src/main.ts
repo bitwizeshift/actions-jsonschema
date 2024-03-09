@@ -1,5 +1,7 @@
+import * as schema from './schema'
+import * as objects from './objects'
 import * as core from '@actions/core'
-import { wait } from './wait'
+import Ajv from 'ajv'
 
 /**
  * The main function for the action.
@@ -7,20 +9,33 @@ import { wait } from './wait'
  */
 export async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput('milliseconds')
+    const loader = schema.load()
 
-    // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
-    core.debug(`Waiting ${ms} milliseconds ...`)
+    const ajv = new Ajv({ allErrors: true })
+    const schemaText = await loader.load()
+    const validate = ajv.compile(JSON.parse(schemaText))
 
-    // Log the current timestamp, wait, then log the new timestamp
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
-
-    // Set outputs for other workflow steps to use
-    core.setOutput('time', new Date().toTimeString())
+    let count = 0
+    for await (const [file, obj] of objects.load()) {
+      count++
+      const valid = validate(obj)
+      if (!valid) {
+        for (const error of validate.errors || []) {
+          const property = error.instancePath.substring(1).replace(/\//g, '.')
+          core.error(`${error.message}}`, {
+            title: `Validation Failure: ${property}`,
+            file
+          })
+        }
+        core.setFailed(`Validation failed: ${ajv.errorsText(validate.errors)}`)
+      }
+    }
+    if (count == 0) {
+      core.info('No files were validated')
+    }
   } catch (error) {
-    // Fail the workflow run if an error occurs
-    if (error instanceof Error) core.setFailed(error.message)
+    if (error instanceof Error) {
+      core.setFailed(error.message)
+    }
   }
 }

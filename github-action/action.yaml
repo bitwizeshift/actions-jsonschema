@@ -1,0 +1,22 @@
+name: Validate GitHub Action schema
+description: |
+  Validate a GitHub Action definition against its JSON schema definition.
+inputs:
+  paths:
+    description: |
+      Multiline input of glob patterns to validate. Separate expressions are
+      separated between lines.
+    required: true
+  cache-key:
+    description: |
+      The cache key to use for caching the schema.
+    required: false
+runs:
+  using: 'composite'
+  steps:
+    - name: Call Root Action
+      uses: ../action.yaml
+      with:
+        paths: ${{ inputs.paths }}
+        schema: https://json.schemastore.org/github-action.json
+        cache-key: ${{ inputs.cache-key }}

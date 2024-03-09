@@ -1,21 +1,23 @@
 {
-  "name": "typescript-action",
-  "description": "GitHub Actions TypeScript template",
-  "version": "0.0.0",
-  "author": "",
+  "name": "jsonschema-action",
+  "description": "GitHub Actions for JSON Schema validation",
+  "version": "0.1.0",
+  "author": "Matthew Rodusek",
   "private": true,
-  "homepage": "https://github.com/actions/typescript-action",
+  "homepage": "https://github.com/bitwizeshift/jsonschema-action",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/actions/typescript-action.git"
+    "url": "git+https://github.com/bitwizeshift/jsonschema-action.git"
   },
   "bugs": {
-    "url": "https://github.com/actions/typescript-action/issues"
+    "url": "https://github.com/bitwizeshift/jsonschema-action/issues"
   },
   "keywords": [
     "actions",
     "node",
-    "setup"
+    "validation",
+    "json",
+    "jsonschema"
   ],
   "exports": {
     ".": "./dist/index.js"
@@ -66,7 +68,11 @@
     ]
   },
   "dependencies": {
-    "@actions/core": "^1.10.1"
+    "@actions/cache": "^3.2.4",
+    "@actions/core": "^1.10.1",
+    "@types/js-yaml": "^4.0.9",
+    "ajv": "^8.12.0",
+    "js-yaml": "^4.1.0"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
