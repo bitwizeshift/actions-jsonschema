@@ -8,7 +8,7 @@ import yaml from 'js-yaml'
  *
  * @returns an iterable of objects
  */
-export async function* load(): AsyncIterable<[string, any]> {
+export async function* load(): AsyncIterable<[string, unknown]> {
   for await (const path of getInputFiles()) {
     const content = await promises.readFile(path, 'utf-8')
 
@@ -44,7 +44,11 @@ export function isJSON(file: string): boolean {
  */
 export async function* getInputFiles(): AsyncIterable<string> {
   const input = core.getInput('paths', { required: true })
-  core.info(`Globbing input: ${input}`)
+  core.startGroup('Globbing inputs')
+  for (const line of input.trim().split('\n')) {
+    core.info(`${line.trim()}`)
+  }
+  core.endGroup()
   const globber = await glob.create(input)
 
   for await (const filePath of globber.globGenerator()) {

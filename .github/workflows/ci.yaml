@@ -10,6 +10,8 @@ on:
 
 permissions:
   contents: read
+  issues: read
+  pull-requests: read
 
 jobs:
   test-typescript:
@@ -51,23 +53,36 @@ jobs:
           - name: Self Validation
             schema: https://json.schemastore.org/github-action.json
             paths: ./action.yaml
+            scope: all
             expect-pass: true
           - name: github-action Validation
             schema: https://json.schemastore.org/github-action.json
             paths: ./github-action/action.yaml
+            scope: all
             expect-pass: true
           - name: github workflow Validation
             schema: https://json.schemastore.org/github-workflow.json
             paths: ./.github/workflows/*.yaml
+            scope: all
             expect-pass: true
           - name: Bad Action
             schema: https://json.schemastore.org/github-action.json
             paths: ./.github/bad-action.yaml
+            scope: all
             expect-pass: false
+          - name: Diff github-action Validation
+            schema: https://json.schemastore.org/github-action.json
+            paths: |
+              ./github-action/action.yaml
+              ./github-workflow/action.yaml
+            scope: diff
+            expect-pass: true
 
-    uses: ./.github/workflows/test.yaml
     name: Test ${{ matrix.test.name }}
+    uses: ./.github/workflows/test.yaml
+    secrets: inherit
     with:
       schema: ${{ matrix.test.schema }}
       paths: ${{ matrix.test.paths }}
       expect-pass: ${{ matrix.test.expect-pass }}
+      scope: ${{ matrix.test.scope }}

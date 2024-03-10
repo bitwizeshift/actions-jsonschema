@@ -1,9 +1,9 @@
 # Create a GitHub Action Using TypeScript
 
-[![GitHub Super-Linter](https://github.com/bitwizeshift/actions-jsonschema/actions/workflows/linter.yml/badge.svg)](https://github.com/super-linter/super-linter)
-![CI](https://github.com/bitwizeshift/actions-jsonschema/actions/workflows/ci.yml/badge.svg)
-[![Check dist/](https://github.com/bitwizeshift/actions-jsonschema/actions/workflows/check-dist.yml/badge.svg)](https://github.com/bitwizeshift/actions-jsonschema/actions/workflows/check-dist.yml)
-[![CodeQL](https://github.com/bitwizeshift/actions-jsonschema/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/bitwizeshift/actions-jsonschema/actions/workflows/codeql-analysis.yml)
+[![GitHub Super-Linter](https://github.com/bitwizeshift/actions-jsonschema/actions/workflows/linter.yaml/badge.svg)](https://github.com/super-linter/super-linter)
+![CI](https://github.com/bitwizeshift/actions-jsonschema/actions/workflows/ci.yaml/badge.svg)
+[![Check dist/](https://github.com/bitwizeshift/actions-jsonschema/actions/workflows/check-dist.yaml/badge.svg)](https://github.com/bitwizeshift/actions-jsonschema/actions/workflows/check-dist.yaml)
+[![CodeQL](https://github.com/bitwizeshift/actions-jsonschema/actions/workflows/codeql-analysis.yaml/badge.svg)](https://github.com/bitwizeshift/actions-jsonschema/actions/workflows/codeql-analysis.yaml)
 [![Coverage](./badges/coverage.svg)](./badges/coverage.svg)
 
 Use this template to bootstrap the creation of a TypeScript action. :rocket:
@@ -74,11 +74,11 @@ need to perform some initial setup steps before you can develop your action.
 
 ## Update the Action Metadata
 
-The [`action.yml`](action.yml) file defines metadata about your action, such as
-input(s) and output(s). For details about this file, see
+The [`action.yaml`](action.yaml) file defines metadata about your action, such
+as input(s) and output(s). For details about this file, see
 [Metadata syntax for GitHub Actions](https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions).
 
-When you copy this repository, update `action.yml` with the name, description,
+When you copy this repository, update `action.yaml` with the name, description,
 inputs, and outputs for your action.
 
 ## Update the Action Code
@@ -158,8 +158,8 @@ in the GitHub Actions toolkit.
 ## Validate the Action
 
 You can now validate the action by referencing it in a workflow file. For
-example, [`ci.yml`](./.github/workflows/ci.yml) demonstrates how to reference an
-action in the same repository.
+example, [`ci.yaml`](./.github/workflows/ci.yaml) demonstrates how to reference
+an action in the same repository.
 
 ```yaml
 steps:

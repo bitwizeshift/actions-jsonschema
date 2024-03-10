@@ -1,10 +1,6 @@
 import { isYAML, isJSON } from '../src/objects'
 
 describe('objects', () => {
-  describe('load', () => {
-    it('should load all objects from input files', async () => {})
-  })
-
   describe('isYAML', () => {
     it('should return true if the file is a YAML file', () => {
       const yamlFile = 'example.yaml'
@@ -22,12 +18,6 @@ describe('objects', () => {
 
       expect(isJSON(yamlFile)).toBe(false)
       expect(isJSON(jsonFile)).toBe(true)
-    })
-  })
-
-  describe('getInputFiles', () => {
-    it('should return an async iterable of input files', async () => {
-      // TODO: Properly test
     })
   })
 })

@@ -1,6 +1,6 @@
-name: Validate GitHub Action schema
+name: Validate GitHub Workflow schema
 description: |
-  Validate a GitHub Action definition against its JSON schema definition.
+  Validate a GitHub Workflow definition against its JSON schema definition.
 inputs:
   paths:
     description: |
@@ -34,11 +34,11 @@ outputs:
 runs:
   using: 'composite'
   steps:
-    - name: Validate GitHub Action schema
+    - name: Validate GitHub Workflow schema
       id: schema
       uses: ../
       with:
-        schema: https://json.schemastore.org/github-action.json
+        schema: https://json.schemastore.org/github-workflow.json
         paths: ${{ inputs.paths }}
         cache-key: ${{ inputs.cache-key }}
         scope: ${{ inputs.scope }}

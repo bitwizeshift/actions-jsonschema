@@ -1,5 +1,10 @@
 name: Test JSON Schema action
 
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+
 on:
   workflow_call:
     inputs:
@@ -20,6 +25,11 @@ on:
         required: false
         type: string
         default: ''
+      scope:
+        description: The scope of files to ignore for validation
+        required: false
+        type: string
+        default: 'all'
 
 jobs:
   build:
@@ -30,17 +40,19 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Validate JSON Schema
+        id: validate
         uses: ./
         continue-on-error: ${{ !inputs.expect-pass }}
         with:
           schema: ${{ inputs.schema }}
           paths: ${{ inputs.paths }}
           cache-key: ${{ inputs.cache-key }}
+          scope: ${{ inputs.scope }}
 
       - name: Check the result
+        if: ${{ always() && !inputs.expect-pass }}
         shell: bash
         run: |
-          if [ ${{ !inputs.expect-pass }} -eq 0 ]; then
-            echo "Expected to pass, but failed"
+          if ${{ steps.validate.outputs.status == 'success' }}; then
             exit 1
           fi

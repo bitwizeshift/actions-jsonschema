@@ -19,7 +19,7 @@ export interface Loader {
  * @returns a loader that fetches the schema from the input
  */
 export function load(): Loader {
-  let schema = core.getInput('schema', { required: true })
+  const schema = core.getInput('schema', { required: true })
   return from(schema)
 }
 
@@ -40,7 +40,7 @@ export function isValidURL(url: string): boolean {
  * @returns true if the cache key is set
  */
 export function hasCache(): boolean {
-  return core.getInput('cache-key') != ''
+  return core.getInput('cache-key') !== ''
 }
 
 /**
@@ -71,12 +71,12 @@ export function cacheLoader(loader: Loader): Loader {
 
   return {
     async load(): Promise<string> {
-      let cacheId = await cache.restoreCache([filePath], key)
+      const cacheId = await cache.restoreCache([filePath], key)
 
       if (!cacheId) {
         core.info(`Cache entry not found for ${key}; creating a new one`)
         core.info(`Fetching schema content from source`)
-        let result = await loader.load()
+        const result = await loader.load()
         fs.writeFileSync(filePath, result)
         await cache.saveCache([filePath], key)
         return result
@@ -107,10 +107,10 @@ export function fromURL(url: string): Loader {
  * @param url the URL to fetch the schema from
  * @returns a loader that fetches the schema from a file on disk
  */
-export function fromFile(path: string): Loader {
+export function fromFile(filePath: string): Loader {
   return {
     async load(): Promise<string> {
-      const data = await fs.promises.readFile(path, 'utf-8')
+      const data = await fs.promises.readFile(filePath, 'utf-8')
       return data
     }
   }

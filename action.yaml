@@ -26,6 +26,25 @@ inputs:
       schema is downloaded from a URL.
     required: false
     default: ''
+  github-token:
+    description: |
+      The GitHub token to use for authenticating with github. This enables
+      the 'diff' option how much gets authenticated.
+    required: false
+    default: ${{ github.token }}
+  scope:
+    description: |
+      The scope of the validation. This can be one of 'all' or 'diff'.
+      - 'all'  checks all files for schema validation erorrs.
+      - 'diff' checks only changed files for schema validation errors.
+    required: false
+    default: 'all'
+
+outputs:
+  status:
+    description: |
+      The status of the validation. This will be 'success' if the validation
+      passes, and 'failure' if the validation fails.
 
 runs:
   using: node20

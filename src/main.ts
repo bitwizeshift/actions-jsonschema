@@ -1,3 +1,4 @@
+import * as filter from './filter'
 import * as schema from './schema'
 import * as objects from './objects'
 import * as core from '@actions/core'
@@ -8,6 +9,7 @@ import Ajv from 'ajv'
  * @returns {Promise<void>} Resolves when the action is complete.
  */
 export async function run(): Promise<void> {
+  let success = true
   try {
     const loader = schema.load()
 
@@ -17,29 +19,42 @@ export async function run(): Promise<void> {
     const validate = ajv.compile(JSON.parse(schemaText))
     core.endGroup()
 
+    const test = await filter.load()
+
     let count = 0
     for await (const [file, obj] of objects.load()) {
       core.startGroup(`Validating ${file}`)
       count++
-      const valid = validate(obj)
-      if (!valid) {
-        for (const error of validate.errors || []) {
-          const property = error.instancePath.substring(1).replace(/\//g, '.')
-          core.error(`${error.message}`, {
-            title: `Property '${property}' failed validation`,
-            file
-          })
+      if (test(file)) {
+        const valid = validate(obj)
+        if (!valid) {
+          for (const error of validate.errors || []) {
+            const property = error.instancePath.substring(1).replace(/\//g, '.')
+            core.error(`${error.message}`, {
+              title: `Property '${property}' failed validation`,
+              file
+            })
+          }
+          core.setFailed(
+            `Validation failed: ${ajv.errorsText(validate.errors)}`
+          )
+          success = false
         }
-        core.setFailed(`Validation failed: ${ajv.errorsText(validate.errors)}`)
+      } else {
+        core.info(`Skipping ${file}`)
       }
       core.endGroup()
     }
-    if (count == 0) {
-      core.warning('No files were validated')
+
+    if (count === 0) {
+      core.notice('No files were validated')
     }
   } catch (error) {
     if (error instanceof Error) {
       core.setFailed(error.message)
     }
+    core.setOutput('status', 'failure')
+  } finally {
+    core.setOutput('status', success ? 'success' : 'failure')
   }
 }

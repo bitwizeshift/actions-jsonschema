@@ -2,6 +2,7 @@ import * as schema from '../src/schema'
 import * as core from '@actions/core'
 import * as cache from '@actions/cache'
 import fs from 'fs'
+import fetchmock from 'jest-fetch-mock'
 
 describe('schema', () => {
   describe('isValidURL', () => {
@@ -73,34 +74,10 @@ describe('schema', () => {
 
       // Assert
       expect(loader).toBeDefined()
-      expect(loader.load).toBeInstanceOf(Function)
     })
   })
 
   describe('cacheLoader', () => {
-    /*
-    it('should cache the contents when cache is not found', async () => {
-      // Arrange
-      const want = 'contents'
-      const loader = {
-        load: jest.fn().mockResolvedValue(Promise.resolve(want))
-      }
-      jest.spyOn(cache, 'saveCache').mockResolvedValue(1)
-      jest.spyOn(fs, 'writeFileSync').mockImplementation(() => {})
-
-      // Act
-      const cachedLoader = schema.cacheLoader(loader)
-      const got = await cachedLoader.load()
-
-      // Assert
-      expect(got).toBe(want)
-      expect(loader.load).toHaveBeenCalledTimes(1)
-      expect(cache.saveCache).toHaveBeenCalledTimes(1)
-
-      jest.restoreAllMocks()
-    })
-    */
-
     it('should return cached contents when cache is found', async () => {
       // Arrange
       const want = 'contents'
@@ -124,30 +101,37 @@ describe('schema', () => {
   })
 
   describe('fromURL', () => {
-    it('should create a loader that fetches the schema from a URL', () => {
+    it('should create a loader that fetches the schema from a URL', async () => {
       // Arrange
       const url = 'https://example.com/schema'
+      const want = 'hello world'
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      global.fetch = fetchmock as any
+      fetchmock.mockResponse(want)
 
       // Act
       const loader = schema.fromURL(url)
+      const got = await loader.load()
 
       // Assert
-      expect(loader).toBeDefined()
-      expect(loader.load).toBeInstanceOf(Function)
+      expect(got).toBe(want)
     })
   })
 
   describe('fromFile', () => {
-    it('should create a loader that fetches the schema from a file on disk', () => {
+    it('should create a loader that fetches the schema from a file on disk', async () => {
       // Arrange
       const filePath = '/path/to/schema.json'
+      const want = 'hello world'
+      jest.spyOn(fs.promises, 'readFile').mockReturnValue(Promise.resolve(want))
 
       // Act
       const loader = schema.fromFile(filePath)
+      const got = await loader.load()
 
       // Assert
-      expect(loader).toBeDefined()
-      expect(loader.load).toBeInstanceOf(Function)
+      expect(got).toBe(want)
+      jest.restoreAllMocks()
     })
   })
 })
