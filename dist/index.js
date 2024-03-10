@@ -100189,7 +100189,23 @@ async function* load() {
             yield [path, toml_1.default.parse(content)];
         }
         else {
-            throw new Error(`Unsupported file type: ${path}`);
+            // Fall back to manually attempting to determine file type
+            try {
+                yield [path, JSON.parse(content)];
+            }
+            catch (_) {
+                try {
+                    yield [path, js_yaml_1.default.load(content)];
+                }
+                catch (_) {
+                    try {
+                        yield [path, toml_1.default.parse(content)];
+                    }
+                    catch (_) {
+                        throw new Error(`Unsupported file: ${path}`);
+                    }
+                }
+            }
         }
     }
 }

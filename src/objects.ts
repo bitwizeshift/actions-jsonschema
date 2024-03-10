@@ -21,7 +21,20 @@ export async function* load(): AsyncIterable<[string, unknown]> {
     } else if (isTOML(path)) {
       yield [path, toml.parse(content)]
     } else {
-      throw new Error(`Unsupported file type: ${path}`)
+      // Fall back to manually attempting to determine file type
+      try {
+        yield [path, JSON.parse(content)]
+      } catch (_) {
+        try {
+          yield [path, yaml.load(content)]
+        } catch (_) {
+          try {
+            yield [path, toml.parse(content)]
+          } catch (_) {
+            throw new Error(`Unsupported file: ${path}`)
+          }
+        }
+      }
     }
   }
 }
