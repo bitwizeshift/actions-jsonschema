@@ -78,6 +78,7 @@ export function cacheLoader(loader: Loader): Loader {
         core.info(`Fetching schema content from source`)
         const result = await loader.load()
         fs.writeFileSync(filePath, result)
+        core.info(`Updating cache entry for ${key}`)
         await cache.saveCache([filePath], key)
         return result
       }

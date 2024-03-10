@@ -1,6 +1,7 @@
 import * as filter from './filter'
 import * as schema from './schema'
 import * as objects from './objects'
+import * as workspace from './workspace'
 import * as core from '@actions/core'
 import Ajv from 'ajv'
 
@@ -23,7 +24,7 @@ export async function run(): Promise<void> {
 
     let count = 0
     for await (const [file, obj] of objects.load()) {
-      core.startGroup(`Validating ${file}`)
+      core.startGroup(`Validating ${workspace.relative(file)}`)
       count++
       if (test(file)) {
         const valid = validate(obj)
@@ -39,9 +40,11 @@ export async function run(): Promise<void> {
             `Validation failed: ${ajv.errorsText(validate.errors)}`
           )
           success = false
+        } else {
+          core.info('Validated without errors')
         }
       } else {
-        core.info(`Skipping ${file}`)
+        core.info(`Validation skipped (file not included in diff)`)
       }
       core.endGroup()
     }

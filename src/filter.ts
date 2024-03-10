@@ -1,6 +1,7 @@
 import * as github from '@actions/github'
 import * as core from '@actions/core'
 import * as path from 'path'
+import * as workspace from './workspace'
 
 export async function load(): Promise<(v: string) => boolean> {
   const scope = core.getInput('scope')
@@ -42,7 +43,7 @@ export async function diff(): Promise<(v: string) => boolean> {
     files = (prDiff.files || []).map(file => path.resolve(file.filename))
     core.startGroup('files changed')
     for (const file of files) {
-      core.info(file)
+      core.info(`${workspace.relative(file)}`)
     }
     core.endGroup()
   } else {
@@ -54,7 +55,7 @@ export async function diff(): Promise<(v: string) => boolean> {
     files = (commit.files || []).map(file => path.resolve(file.filename))
     core.startGroup('files changed')
     for (const file of files) {
-      core.info(file)
+      core.info(`${workspace.relative(file)}`)
     }
     core.endGroup()
   }

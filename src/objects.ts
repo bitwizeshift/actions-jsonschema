@@ -1,3 +1,4 @@
+import * as workspace from './workspace'
 import * as promises from 'fs/promises'
 import * as core from '@actions/core'
 import * as glob from '@actions/glob'
@@ -63,7 +64,7 @@ export async function* getInputFiles(): AsyncIterable<string> {
   const globber = await glob.create(input)
 
   for await (const filePath of globber.globGenerator()) {
-    core.debug(`Found file: ${filePath}`)
+    core.debug(`Globbed ${workspace.relative(filePath)}`)
     yield filePath
   }
 }

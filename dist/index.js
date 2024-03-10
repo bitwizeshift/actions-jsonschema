@@ -99971,6 +99971,7 @@ exports.diff = exports.all = exports.load = void 0;
 const github = __importStar(__nccwpck_require__(5438));
 const core = __importStar(__nccwpck_require__(2186));
 const path = __importStar(__nccwpck_require__(1017));
+const workspace = __importStar(__nccwpck_require__(3815));
 async function load() {
     const scope = core.getInput('scope');
     switch (scope) {
@@ -100009,7 +100010,7 @@ async function diff() {
         files = (prDiff.files || []).map(file => path.resolve(file.filename));
         core.startGroup('files changed');
         for (const file of files) {
-            core.info(file);
+            core.info(`${workspace.relative(file)}`);
         }
         core.endGroup();
     }
@@ -100022,7 +100023,7 @@ async function diff() {
         files = (commit.files || []).map(file => path.resolve(file.filename));
         core.startGroup('files changed');
         for (const file of files) {
-            core.info(file);
+            core.info(`${workspace.relative(file)}`);
         }
         core.endGroup();
     }
@@ -100069,6 +100070,7 @@ exports.run = void 0;
 const filter = __importStar(__nccwpck_require__(8752));
 const schema = __importStar(__nccwpck_require__(2199));
 const objects = __importStar(__nccwpck_require__(5785));
+const workspace = __importStar(__nccwpck_require__(3815));
 const core = __importStar(__nccwpck_require__(2186));
 const ajv_1 = __importDefault(__nccwpck_require__(2426));
 /**
@@ -100087,7 +100089,7 @@ async function run() {
         const test = await filter.load();
         let count = 0;
         for await (const [file, obj] of objects.load()) {
-            core.startGroup(`Validating ${file}`);
+            core.startGroup(`Validating ${workspace.relative(file)}`);
             count++;
             if (test(file)) {
                 const valid = validate(obj);
@@ -100102,9 +100104,12 @@ async function run() {
                     core.setFailed(`Validation failed: ${ajv.errorsText(validate.errors)}`);
                     success = false;
                 }
+                else {
+                    core.info('Validated without errors');
+                }
             }
             else {
-                core.info(`Skipping ${file}`);
+                core.info(`Validation skipped (file not included in diff)`);
             }
             core.endGroup();
         }
@@ -100160,6 +100165,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getInputFiles = exports.isTOML = exports.isJSON = exports.isYAML = exports.load = void 0;
+const workspace = __importStar(__nccwpck_require__(3815));
 const promises = __importStar(__nccwpck_require__(3292));
 const core = __importStar(__nccwpck_require__(2186));
 const glob = __importStar(__nccwpck_require__(8090));
@@ -100225,7 +100231,7 @@ async function* getInputFiles() {
     core.endGroup();
     const globber = await glob.create(input);
     for await (const filePath of globber.globGenerator()) {
-        core.debug(`Found file: ${filePath}`);
+        core.debug(`Globbed ${workspace.relative(filePath)}`);
         yield filePath;
     }
 }
@@ -100336,6 +100342,7 @@ function cacheLoader(loader) {
                 core.info(`Fetching schema content from source`);
                 const result = await loader.load();
                 fs_1.default.writeFileSync(filePath, result);
+                core.info(`Updating cache entry for ${key}`);
                 await cache.saveCache([filePath], key);
                 return result;
             }
@@ -100373,6 +100380,51 @@ function fromFile(filePath) {
     };
 }
 exports.fromFile = fromFile;
+
+
+/***/ }),
+
+/***/ 3815:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.relative = void 0;
+const path = __importStar(__nccwpck_require__(1017));
+/**
+ * Computes the relative path of the file, relative to the github workspace.
+ *
+ * @param file the file to make relative
+ * @returns the relative path of the file
+ */
+function relative(file) {
+    return path.relative(process.env.GITHUB_WORKSPACE || process.cwd(), file);
+}
+exports.relative = relative;
 
 
 /***/ }),
