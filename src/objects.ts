@@ -2,6 +2,7 @@ import * as promises from 'fs/promises'
 import * as core from '@actions/core'
 import * as glob from '@actions/glob'
 import yaml from 'js-yaml'
+import toml from 'toml'
 
 /**
  * Loads all objects from input files
@@ -16,6 +17,8 @@ export async function* load(): AsyncIterable<[string, unknown]> {
       yield [path, yaml.load(content)]
     } else if (isJSON(path)) {
       yield [path, JSON.parse(content)]
+    } else if (isTOML(path)) {
+      yield [path, toml.parse(content)]
     } else {
       throw new Error(`Unsupported file type: ${path}`)
     }
@@ -37,6 +40,14 @@ export function isYAML(file: string): boolean {
  */
 export function isJSON(file: string): boolean {
   return file.toLocaleLowerCase().endsWith('.json')
+}
+
+/**
+ * @param file the file to check
+ * @returns true if the file is a TOML file
+ */
+export function isTOML(file: string): boolean {
+  return file.toLocaleLowerCase().endsWith('.toml')
 }
 
 /**

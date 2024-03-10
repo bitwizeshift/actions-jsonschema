@@ -53,7 +53,7 @@ export async function run(): Promise<void> {
     if (error instanceof Error) {
       core.setFailed(error.message)
     }
-    core.setOutput('status', 'failure')
+    success = false
   } finally {
     core.setOutput('status', success ? 'success' : 'failure')
   }

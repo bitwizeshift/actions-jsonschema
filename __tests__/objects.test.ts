@@ -1,4 +1,4 @@
-import { isYAML, isJSON } from '../src/objects'
+import { isYAML, isJSON, isTOML } from '../src/objects'
 
 describe('objects', () => {
   describe('isYAML', () => {
@@ -18,6 +18,16 @@ describe('objects', () => {
 
       expect(isJSON(yamlFile)).toBe(false)
       expect(isJSON(jsonFile)).toBe(true)
+    })
+  })
+
+  describe('isTOML', () => {
+    it('should return true if the file is a TOML file', () => {
+      const yamlFile = 'example.yaml'
+      const tomlFile = 'example.toml'
+
+      expect(isTOML(yamlFile)).toBe(false)
+      expect(isTOML(tomlFile)).toBe(true)
     })
   })
 })

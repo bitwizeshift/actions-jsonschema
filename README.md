@@ -5,30 +5,33 @@
 [![Check dist/](https://github.com/bitwizeshift/actions-jsonschema/actions/workflows/check-dist.yaml/badge.svg)](https://github.com/bitwizeshift/actions-jsonschema/actions/workflows/check-dist.yaml)
 [![CodeQL](https://github.com/bitwizeshift/actions-jsonschema/actions/workflows/codeql-analysis.yaml/badge.svg)](https://github.com/bitwizeshift/actions-jsonschema/actions/workflows/codeql-analysis.yaml)
 
-A GitHub action for validating both [JSON] and [YAML] configuration files
-against a [JSON Schema].
+A GitHub action for validating [JSON], [TOML], and [YAML] formatted
+configuration files against a [JSON Schema] definition.
 
 [JSON]: https://www.json.org/json-en.html
 [YAML]: https://yaml.org/
+[TOML]: https://toml.io/en/
 [JSON Schema]: https://json-schema.org/
 
-> Convience [composite actions] are available in addition to the primary
-> `jsonschema` action
+> Convenience [composite actions] are available in addition to the primary
+> `jsonschema` action, such as:
 >
 > - `github-workflow`: which leverages [schemastore]'s [`github-workflow.json`]
 > - `github-action`: which leverages [schemastore]'s [`github-action.json`]
+> - `cargo`: which leverages [schemastore]'s [`cargo.json`]
 
 [`github-workflow.json`]: https://json.schemastore.org/github-workflow.json
 [`github-action.json`]: https://json.schemastore.org/github-action.json
+[`cargo.json`]: https://json.schemastore.org/cargo.json
 [composite actions]:
   https://docs.github.com/en/actions/creating-actions/creating-a-composite-action
 
 ## Features
 
-- [x] Supports both [JSON] and [YAML] resource validation.
-- [x] Validation against both remote or local JSON schemas.
+- [x] Supports [JSON], [YAML], and [TOML] resource validation.
+- [x] Validates schemas from both remote or local definitions.
+- [x] Support for [caching] downloaded schemas to reduce network traffic.
 - [x] Convenience actions which leverage [schemastore] schems.
-- [x] Support for [caching] downloaded schemas.
 
 [schemastore]: https://www.schemastore.org/json/
 
@@ -90,7 +93,7 @@ jobs:
 ### Validating GitHub workflows on change (with caching)
 
 ```yaml
-name: Validate against remote Schema
+name: Validate GitHub workflows Schema
 
 on:
   push:

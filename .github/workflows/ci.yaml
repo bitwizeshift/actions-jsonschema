@@ -57,10 +57,10 @@ jobs:
             expect-pass: true
           - name: github-action Validation
             schema: https://json.schemastore.org/github-action.json
-            paths: ./github-action/action.yaml
+            paths: ./**/action.yaml
             scope: all
             expect-pass: true
-          - name: github workflow Validation
+          - name: github-workflow Validation
             schema: https://json.schemastore.org/github-workflow.json
             paths: ./.github/workflows/*.yaml
             scope: all
@@ -72,9 +72,7 @@ jobs:
             expect-pass: false
           - name: Diff github-action Validation
             schema: https://json.schemastore.org/github-action.json
-            paths: |
-              ./github-action/action.yaml
-              ./github-workflow/action.yaml
+            paths: ./**/action.yaml
             scope: diff
             expect-pass: true
 
