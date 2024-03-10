@@ -56,9 +56,9 @@ file].
 - `cache-key` - (optional) key to use for caching downloaded schemas. Only
   relevant when `schema` refers to a URL.
 - `github-token` - (optional) the GitHub API token to use for internal API
-  calls. Default: `${{ github.token }}`
+  calls. Default: `${{ github.token }}`.
 - `scope` - (optional) whether to validate `'all'` globbed files, or only ones
-  that have been modified (`'diff'`). Default: `'all'`
+  that have been modified in the `'diff'`. Default: `'all'`.
 
 ### Outputs
 
@@ -93,7 +93,7 @@ jobs:
 ### Validating GitHub workflows on change (with caching)
 
 ```yaml
-name: Validate GitHub workflows Schema
+name: Validate GitHub Workflow Schema
 
 on:
   push:
@@ -115,5 +115,5 @@ jobs:
         with:
           paths: ./.github/workflows/*.yaml
           cache-key: github-workflow
-          scope: diff
+          scope: diff # Using 'diff' only evaluates files that change
 ```
