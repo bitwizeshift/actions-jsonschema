@@ -7,6 +7,9 @@ inputs:
     required: true
     default: 'default value'
     type: boolean
+  input2:
+    type: string
+    default: true
 
 runs:
   using: 'composite'
