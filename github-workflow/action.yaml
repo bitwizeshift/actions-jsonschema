@@ -36,7 +36,7 @@ runs:
   steps:
     - name: Validate GitHub Workflow schema
       id: schema
-      uses: ../
+      uses: ./
       with:
         schema: https://json.schemastore.org/github-workflow.json
         paths: ${{ inputs.paths }}

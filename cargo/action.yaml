@@ -36,7 +36,7 @@ runs:
   steps:
     - name: Validate Cargo schema
       id: schema
-      uses: ../
+      uses: ./
       with:
         schema: https://json.schemastore.org/cargo.json
         paths: ${{ inputs.paths }}

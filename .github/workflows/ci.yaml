@@ -84,3 +84,32 @@ jobs:
       paths: ${{ matrix.test.paths }}
       expect-pass: ${{ matrix.test.expect-pass }}
       scope: ${{ matrix.test.scope }}
+
+  convenience-github-workflow:
+    name: Test github-workflow
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Validate JSON Schema
+        uses: ./github-workflow
+        with:
+          paths: .github/workflows/*.yaml
+          cache-key: github-workflow
+          scope: all
+
+  convenience-github-action:
+    name: Test github-action
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Validate JSON Schema
+        uses: ./github-action
+        with:
+          paths: |
+            ./github-*/action.yaml
+            ./cargo/action.yaml
+            ./action.yaml
+          cache-key: github-action
+          scope: all
