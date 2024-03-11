@@ -6,7 +6,10 @@ inputs:
     description: |
       Multiline input of glob patterns to validate. Separate expressions are
       separated between lines.
-    required: true
+    required: false
+    default: |
+      ./.github/workflows/*.yaml
+      ./.github/workflows/*.yml
   cache-key:
     description: |
       The cache key to use for caching the schema.

@@ -6,7 +6,12 @@ inputs:
     description: |
       Multiline input of glob patterns to validate. Separate expressions are
       separated between lines.
-    required: true
+    required: false
+    default: |
+      ./cargo.toml
+      ./Cargo.toml
+      ./**/cargo.toml
+      ./**/Cargo.toml
   cache-key:
     description: |
       The cache key to use for caching the schema.
