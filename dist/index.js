@@ -99993,22 +99993,19 @@ async function diff() {
     const octokit = github.getOctokit(token);
     let files;
     if (github.context.issue.number) {
-        core.info('Getting diff from pull-request');
         const { data: pull } = await octokit.rest.pulls.get({
             owner: github.context.issue.owner,
             repo: github.context.issue.repo,
-            pull_number: github.context.issue.number,
-            mediaType: {
-                format: 'diff'
-            }
+            pull_number: github.context.issue.number
         });
+        const diffspec = `${pull.base.label}...${pull.head.label}`;
         const { data: prDiff } = await octokit.rest.repos.compareCommitsWithBasehead({
             owner: github.context.repo.owner,
             repo: github.context.repo.repo,
-            basehead: `${pull.base.label}..${pull.head.label}`
+            basehead: diffspec
         });
         files = (prDiff.files || []).map(file => path.resolve(file.filename));
-        core.startGroup('files changed');
+        core.startGroup('Files changed');
         for (const file of files) {
             core.info(`${workspace.relative(file)}`);
         }
@@ -100021,7 +100018,7 @@ async function diff() {
             ref: github.context.sha
         });
         files = (commit.files || []).map(file => path.resolve(file.filename));
-        core.startGroup('files changed');
+        core.startGroup('Files changed');
         for (const file of files) {
             core.info(`${workspace.relative(file)}`);
         }
@@ -100087,9 +100084,10 @@ async function run() {
         const validate = ajv.compile(JSON.parse(schemaText));
         core.endGroup();
         const test = await filter.load();
+        core.startGroup('Validating inputs');
         let count = 0;
         for await (const [file, obj] of objects.load()) {
-            core.startGroup(`Validating ${workspace.relative(file)}`);
+            core.startGroup(`${workspace.relative(file)}`);
             count++;
             if (test(file)) {
                 const valid = validate(obj);
@@ -100113,6 +100111,7 @@ async function run() {
             }
             core.endGroup();
         }
+        core.endGroup();
         if (count === 0) {
             core.notice('No files were validated');
         }
