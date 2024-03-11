@@ -22,10 +22,9 @@ export async function run(): Promise<void> {
 
     const test = await filter.load()
 
-    core.startGroup('Validating inputs')
     let count = 0
     for await (const [file, obj] of objects.load()) {
-      core.startGroup(`${workspace.relative(file)}`)
+      core.startGroup(`Validating ${workspace.relative(file)}`)
       count++
       if (test(file)) {
         const valid = validate(obj)
@@ -49,7 +48,6 @@ export async function run(): Promise<void> {
       }
       core.endGroup()
     }
-    core.endGroup()
 
     if (count === 0) {
       core.notice('No files were validated')
