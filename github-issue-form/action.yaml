@@ -1,0 +1,53 @@
+name: Validate GitHub Issue Form schema
+description: |
+  Validate a GitHub Issue Form definition against its JSON schema
+  definition.
+inputs:
+  paths:
+    description: |
+      Multiline input of glob patterns to validate. Separate expressions are
+      separated between lines.
+    required: false
+    default: |
+      **/.github/ISSUE_TEMPLATE/**.yml
+      **/.github/ISSUE_TEMPLATE/**.yaml
+      **/.gitea/ISSUE_TEMPLATE/**.yml
+      **/.gitea/ISSUE_TEMPLATE/**.yaml
+      **/.forgejo/ISSUE_TEMPLATE/**.yml
+      **/.forgejo/ISSUE_TEMPLATE/**.yaml
+  cache-key:
+    description: |
+      The cache key to use for caching the schema.
+    required: false
+  github-token:
+    description: |
+      The GitHub token to use for authenticating with github. This enables
+      the 'diff' option how much gets authenticated.
+    required: false
+    default: ${{ github.token }}
+  scope:
+    description: |
+      The scope of the validation. This can be one of 'all' or 'diff'.
+      - 'all'  checks all files for schema validation erorrs.
+      - 'diff' checks only changed files for schema validation errors.
+    required: false
+    default: 'all'
+outputs:
+  status:
+    description: |
+      The status of the validation. This will be 'success' if the validation
+      passes, and 'failure' if the validation fails.
+    value: ${{ steps.schema.outputs.status }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Validate Issue Form schema
+      id: schema
+      uses: ./
+      with:
+        schema: https://json.schemastore.org/github-issue-forms.json
+        paths: ${{ inputs.paths }}
+        cache-key: ${{ inputs.cache-key }}
+        scope: ${{ inputs.scope }}
+        github-token: ${{ inputs.github-token }}
