@@ -75,6 +75,11 @@ jobs:
             paths: ./**/action.yaml
             scope: diff
             expect-pass: true
+          - name: Diff Bad Action
+            schema: https://json.schemastore.org/github-action.json
+            paths: ./.github/bad-action.yaml
+            scope: diff
+            expect-pass: false
 
     name: Test ${{ matrix.test.name }}
     uses: ./.github/workflows/test.yaml
